@@ -14,3 +14,7 @@ A simple URL shortener service built with Spring Boot. It allows users to create
 - filters - http request interceptors
 - configs - application configuration
 - utils - helper classes
+
+## Running the Application
+
+```./gradlew bootRun --args='--spring.profiles.active=dev'```
