@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import io.velan.urlshortener.constants.GlobalMessages;
 import io.velan.urlshortener.dtos.ErrorResponse;
 import io.velan.urlshortener.exceptions.UrlNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -29,7 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGenericException(Exception ex) {
-        System.out.println(ex);
+        log.info(ex.toString());
 
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), GlobalMessages.INTERNAL_SERVER_ERROR, GlobalMessages.ERROR_OCCURED);
     }
