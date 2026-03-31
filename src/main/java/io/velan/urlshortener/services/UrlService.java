@@ -1,10 +1,5 @@
 package io.velan.urlshortener.services;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import io.velan.urlshortener.configs.AppProperties;
 import io.velan.urlshortener.dtos.CreateShortUrlRequest;
 import io.velan.urlshortener.dtos.ShortUrlResponse;
@@ -13,6 +8,9 @@ import io.velan.urlshortener.entities.ShortUrl;
 import io.velan.urlshortener.exceptions.UrlNotFoundException;
 import io.velan.urlshortener.repository.UrlRepository;
 import io.velan.urlshortener.utils.ShortCodeGenerator;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UrlService {
@@ -21,7 +19,9 @@ public class UrlService {
     private final AppProperties appProperties;
     private final ShortCodeGenerator shortCodeGenerator;
 
-    public UrlService(UrlRepository urlRepository, AppProperties appProperties,
+    public UrlService(
+            UrlRepository urlRepository,
+            AppProperties appProperties,
             ShortCodeGenerator shortCodeGenerator) {
         this.urlRepository = urlRepository;
         this.appProperties = appProperties;
@@ -30,26 +30,30 @@ public class UrlService {
 
     public ShortUrlResponse createShortUrl(CreateShortUrlRequest request) {
         String shortCode = shortCodeGenerator.generate();
-        ShortUrl url = new ShortUrl(shortCode, request.getOriginalUrl(), System.currentTimeMillis());
+        ShortUrl url =
+                new ShortUrl(shortCode, request.getOriginalUrl(), System.currentTimeMillis());
         urlRepository.save(url);
         return toResponse(url);
     }
 
     public ShortUrlResponse getShortUrl(String shortCode) {
-        ShortUrl url = urlRepository.findByShortCode(shortCode).orElseThrow(() -> new UrlNotFoundException(shortCode));
+        ShortUrl url =
+                urlRepository
+                        .findByShortCode(shortCode)
+                        .orElseThrow(() -> new UrlNotFoundException(shortCode));
 
         return toResponse(url);
     }
 
     public List<ShortUrlResponse> getAllShortUrls() {
-        return urlRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+        return urlRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     public ShortUrlResponse updateShortUrl(String shortCode, UpdateShortUrlRequest request) {
-        ShortUrl url = urlRepository.findByShortCode(shortCode).orElseThrow(() -> new UrlNotFoundException(shortCode));
+        ShortUrl url =
+                urlRepository
+                        .findByShortCode(shortCode)
+                        .orElseThrow(() -> new UrlNotFoundException(shortCode));
         url.updateOriginalUrl(request.getOriginalUrl());
         urlRepository.save(url);
         return toResponse(url);
@@ -63,7 +67,8 @@ public class UrlService {
     }
 
     public String getOriginalUrl(String shortCode) {
-        return urlRepository.findByShortCode(shortCode)
+        return urlRepository
+                .findByShortCode(shortCode)
                 .map(ShortUrl::getOriginalUrl)
                 .orElseThrow(() -> new UrlNotFoundException(shortCode));
     }

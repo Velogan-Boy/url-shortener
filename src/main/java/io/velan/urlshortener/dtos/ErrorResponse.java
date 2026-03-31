@@ -16,5 +16,4 @@ public class ErrorResponse {
         this.message = message;
         this.timestamp = System.currentTimeMillis();
     }
-
 }

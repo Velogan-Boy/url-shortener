@@ -1,20 +1,11 @@
 package io.velan.urlshortener.services;
 
-import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.velan.urlshortener.configs.AppProperties;
 import io.velan.urlshortener.dtos.CreateShortUrlRequest;
@@ -24,21 +15,25 @@ import io.velan.urlshortener.entities.ShortUrl;
 import io.velan.urlshortener.exceptions.UrlNotFoundException;
 import io.velan.urlshortener.repository.UrlRepository;
 import io.velan.urlshortener.utils.ShortCodeGenerator;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class UrlServiceTest {
 
-    @Mock
-    private UrlRepository urlRepository;
+    @Mock private UrlRepository urlRepository;
 
-    @Mock
-    private AppProperties appProperties;
+    @Mock private AppProperties appProperties;
 
-    @Mock
-    private ShortCodeGenerator shortCodeGenerator;
+    @Mock private ShortCodeGenerator shortCodeGenerator;
 
-    @InjectMocks
-    private UrlService urlService;
+    @InjectMocks private UrlService urlService;
 
     private static final String BASE_URL = "http://localhost:8080";
 
@@ -51,7 +46,8 @@ class UrlServiceTest {
         ShortUrlResponse response = urlService.createShortUrl(request);
 
         ArgumentCaptor<ShortUrl> captor = ArgumentCaptor.forClass(ShortUrl.class);
-        verify(urlRepository).save(captor.capture()); // argument captor capture what was passed as argument
+        verify(urlRepository)
+                .save(captor.capture()); // argument captor capture what was passed as argument
 
         ShortUrl saved = captor.getValue();
 
@@ -79,18 +75,19 @@ class UrlServiceTest {
     void shouldThrowWhenShortUrlNotFound() {
         when(urlRepository.findByShortCode("missing")).thenReturn(Optional.empty());
 
-        UrlNotFoundException ex
-                = assertThrows(UrlNotFoundException.class, () -> urlService.getShortUrl("missing"));
+        UrlNotFoundException ex =
+                assertThrows(UrlNotFoundException.class, () -> urlService.getShortUrl("missing"));
 
         assertThat(ex.getShortCode()).isEqualTo("missing");
     }
 
     @Test
     void shouldReturnAllShortUrls() {
-        when(urlRepository.findAll()).thenReturn(List.of(
-                new ShortUrl("hello123", "/1", 100L),
-                new ShortUrl("xyz789", "/2", 200L)
-        ));
+        when(urlRepository.findAll())
+                .thenReturn(
+                        List.of(
+                                new ShortUrl("hello123", "/1", 100L),
+                                new ShortUrl("xyz789", "/2", 200L)));
         when(appProperties.getBaseUrl()).thenReturn(BASE_URL);
 
         List<ShortUrlResponse> result = urlService.getAllShortUrls();
@@ -122,8 +119,11 @@ class UrlServiceTest {
     void shouldThrowWhenUpdatingMissingUrl() {
         when(urlRepository.findByShortCode("missing")).thenReturn(Optional.empty());
 
-        assertThrows(UrlNotFoundException.class,
-                () -> urlService.updateShortUrl("missing", new UpdateShortUrlRequest("http://x.com")));
+        assertThrows(
+                UrlNotFoundException.class,
+                () ->
+                        urlService.updateShortUrl(
+                                "missing", new UpdateShortUrlRequest("http://x.com")));
 
         verify(urlRepository, never()).save(any());
     }
@@ -141,8 +141,7 @@ class UrlServiceTest {
     void shouldThrowWhenDeletingMissingUrl() {
         when(urlRepository.existsByShortCode("missing")).thenReturn(false);
 
-        assertThrows(UrlNotFoundException.class,
-                () -> urlService.deleteShortUrl("missing"));
+        assertThrows(UrlNotFoundException.class, () -> urlService.deleteShortUrl("missing"));
 
         verify(urlRepository, never()).deleteByShortCode(any());
     }
@@ -161,7 +160,6 @@ class UrlServiceTest {
     void shouldThrowWhenOriginalUrlNotFound() {
         when(urlRepository.findByShortCode("missing")).thenReturn(Optional.empty());
 
-        assertThrows(UrlNotFoundException.class,
-                () -> urlService.getOriginalUrl("missing"));
+        assertThrows(UrlNotFoundException.class, () -> urlService.getOriginalUrl("missing"));
     }
 }

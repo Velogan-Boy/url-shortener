@@ -22,5 +22,4 @@ public class UpdateShortUrlRequest {
     @Size(max = 2048, message = ValidationMessages.ORIGINAL_URL_MAX)
     @Pattern(regexp = RegEx.URL_PRFIX, message = ValidationMessages.ORIGINAL_URL_SCHEME)
     private String originalUrl;
-
 }

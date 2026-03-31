@@ -21,5 +21,4 @@ public class ShortUrl {
         this.originalUrl = newUrl;
         this.updatedAt = System.currentTimeMillis();
     }
-
 }

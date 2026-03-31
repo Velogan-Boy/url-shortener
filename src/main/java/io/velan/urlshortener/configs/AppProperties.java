@@ -16,5 +16,4 @@ public final class AppProperties {
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
-
 }
