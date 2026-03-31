@@ -9,15 +9,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
-public class CreateShortUrlRequest {
+public class UpdateShortUrlRequest {
 
     @NotBlank(message = ValidationMessages.ORIGINAL_URL_REQUIRED)
     @Size(max = 2048, message = ValidationMessages.ORIGINAL_URL_MAX)
     @Pattern(regexp = RegEx.URL_PRFIX, message = ValidationMessages.ORIGINAL_URL_SCHEME)
     private String originalUrl;
+
 }

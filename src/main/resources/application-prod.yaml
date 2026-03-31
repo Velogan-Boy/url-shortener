@@ -1,7 +1,7 @@
 spring:
-  config:
-    activate:
-      on-profile: prod
+   config:
+      activate:
+         on-profile: prod
 
 app:
-  base-url: https://short.ly
+   base-url: https://short.ly
