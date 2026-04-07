@@ -7,14 +7,13 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "app")
 public final class AppProperties {
 
-      private String baseUrl;
+    private String baseUrl;
 
-      public String getBaseUrl() {
-            return baseUrl;
-      }
+    public String getBaseUrl() {
+        return baseUrl;
+    }
 
-      public void setBaseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-      }
-
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 }

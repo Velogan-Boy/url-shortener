@@ -1,0 +1,11 @@
+<ruleset name="Custom Rules"
+        xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
+
+        <description>
+                Basic PMD rules for code quality
+        </description>
+
+        <rule ref="category/java/bestpractices.xml" />
+        <rule ref="category/java/errorprone.xml" />
+
+</ruleset>

@@ -1,7 +1,7 @@
 spring:
-  config:
-    activate:
-      on-profile: dev
+   config:
+      activate:
+         on-profile: dev
 
 app:
-  base-url: http://localhost:8080
+   base-url: http://localhost:8080
