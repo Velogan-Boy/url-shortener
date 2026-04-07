@@ -6,4 +6,5 @@ public class GlobalMessages {
     public static final String VALIDATION_FAILED = "Validation Failed";
     public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
     public static final String ERROR_OCCURED = "An unexpected error occurred";
+    public static final String EXTERNAL_SERVER_ERROR = "External Service Error";
 }
