@@ -1,6 +1,7 @@
 package io.velan.urlshortener.configs;
 
 import io.velan.urlshortener.filters.JwtAuthFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -46,6 +47,19 @@ public class SecurityConfig {
                                         // Everything else needs auth
                                         .anyRequest()
                                         .authenticated())
+                .anonymous(AbstractHttpConfigurer::disable)
+                .exceptionHandling(
+                        ex ->
+                                ex.authenticationEntryPoint(
+                                                (req, res, ex2) ->
+                                                        res.sendError(
+                                                                HttpServletResponse.SC_UNAUTHORIZED,
+                                                                "Unauthorized"))
+                                        .accessDeniedHandler(
+                                                (req, res, ex2) ->
+                                                        res.sendError(
+                                                                HttpServletResponse.SC_FORBIDDEN,
+                                                                "Forbidden")))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

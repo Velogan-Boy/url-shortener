@@ -1,5 +1,6 @@
 package io.velan.urlshortener.filters;
 
+import io.velan.urlshortener.security.UserPrincipal;
 import io.velan.urlshortener.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,10 +30,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
+        String path = request.getRequestURI();
+
+        boolean isPublic =
+                path.startsWith("/auth")
+                        || path.startsWith("/swagger-ui")
+                        || path.startsWith("/v3/api-docs")
+                        || path.startsWith("/scalar")
+                        || (request.getMethod().equals("GET") && path.matches("^/[a-zA-Z0-9]+$"));
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            if (isPublic) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            response.sendError(
+                    HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
             return;
         }
 
@@ -46,9 +66,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         Long userId = jwtUtils.extractUserId(token);
         String role = jwtUtils.extractRole(token);
 
+        UserPrincipal principal = new UserPrincipal(userId, role);
+
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+                        principal, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
