@@ -1,10 +1,86 @@
 # This will load for all environments (its a base config - can be overridden by env specific configs)
 spring:
+   main:
+      banner-mode: 'off'
    application:
       name: url-shortener
+   datasource:
+      url: jdbc:postgresql://localhost:5432/spring-db
+      username: postgres
+      password: password
+   security:
+      user:
+         name: ignored
+         password: ignored
+
+   jpa:
+      open-in-view: false
+      show-sql: false
+      properties:
+         hibernate:
+            '[format_sql]': true
+            '[highlight_sql]': true
+      hibernate:
+         ddl-auto: none
+
+   cloud:
+      openfeign:
+         circuitbreaker:
+            enabled: false
+
+logging:
+   level:
+      liquibase: DEBUG
+      org:
+         hibernate:
+            SQL: DEBUG
+      feign: DEBUG
+      io.github.resilience4j.retry: DEBUG
+      io.github.resilience4j.circuitbreaker: DEBUG
 
 server:
    port: 7777
 
+feign:
+   circuitbreaker:
+      enabled: false
+   client:
+      config:
+         qr-client:
+            connectTimeout: 1000
+            readTimeout: 3000
+
+resilience4j:
+   retry:
+      instances:
+         qr-client:
+            maxAttempts: 3
+            waitDuration: 2s
+            enable-exponential-backoff: true
+            exponential-backoff-multiplier: 2
+
+   circuitbreaker:
+      instances:
+         qr-client:
+            slidingWindowSize: 5
+            failureRateThreshold: 50
+            waitDurationInOpenState: 15s
+            permittedNumberOfCallsInHalfOpenState: 3
+
+management:
+   endpoints:
+      web:
+         exposure:
+            include: health,metrics,circuitbreakers,retries
+   health:
+      circuitbreakers:
+         enabled: true
+      retries:
+         enabled: true
+
 app:
    base-url: http://localhost:7777
+   jwt:
+      secret: very-very-secret-key-that-should-be-changed-in-production-lol
+      expiration-ms: 86400000
+
